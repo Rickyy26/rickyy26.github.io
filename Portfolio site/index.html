@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ricardo's portfolio</title>
+<meta name="description" content="My portfolio ">
+<style>
+  :root {
+    --bg: #10161a;
+    --panel: #161e23;
+    --panel-hover: #1b252b;
+    --border: #2a363c;
+    --text: #e6ece9;
+    --muted: #8fa39c;
+    --faint: #5c6e69;
+    --accent: #d7a44c;
+    --accent-dim: #a9853f;
+    --ok: #6fae7f;
+    --todo-bg: #3a2f1a;
+    --todo-border: #6b5326;
+    --todo-text: #e8c988;
+    --mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", "Cascadia Code", monospace;
+    --measure: 900px;
+    --radius: 3px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15.5px;
+    line-height: 1.65;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--accent); }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---------- nav ---------- */
+  header.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(16, 22, 26, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .nav-inner {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .nav-inner .logo { color: var(--muted); font-size: 0.92rem; }
+  .nav-inner .logo b { color: var(--text); }
+  .nav-links { display: flex; gap: 1.1rem; font-size: 0.92rem; flex-wrap: wrap; }
+  .nav-links a { color: var(--muted); border-bottom: none; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 3.2rem 0 2.2rem; }
+  .prompt-line {
+    color: var(--faint);
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  .prompt-line .sym { color: var(--accent); }
+  h1.name {
+    margin: 0 0 0.3rem;
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .cursor {
+    display: inline-block;
+    width: 0.55ch;
+    background: var(--accent);
+    margin-left: 2px;
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; opacity: 1; } }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .tagline { color: var(--muted); font-size: 1rem; margin: 0 0 1.6rem; }
+
+  dl.spec {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.2rem;
+    margin: 0 0 1.6rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+  }
+  dl.spec > div { display: contents; }
+  dl.spec dt { color: var(--faint); }
+  dl.spec dt::after { content: ":"; }
+  dl.spec dd { margin: 0; color: var(--text); }
+
+  .bio { color: var(--text); margin: 0 0 1.6rem; }
+
+  .links { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.92rem; }
+  .links a::before { content: "→ "; color: var(--faint); }
+
+  /* ---------- sections ---------- */
+  section { padding: 2.4rem 0; border-top: 1px solid var(--border); }
+  section h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 1.3rem;
+    color: var(--text);
+  }
+  section h2 .hash { color: var(--accent); margin-right: 0.5ch; }
+
+  /* ---------- about ---------- */
+  .toolbox { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+  .pill {
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+  }
+
+  /* ---------- projects ---------- */
+  details.project {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+  }
+  details.project[open] { background: var(--panel-hover); }
+  details.project summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.95rem 1.1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  details.project summary::-webkit-details-marker { display: none; }
+  details.project summary::before {
+    content: "▸";
+    color: var(--accent);
+    transition: transform 0.15s ease;
+    flex: none;
+  }
+  details.project[open] summary::before { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) {
+    details.project summary::before { transition: none; }
+  }
+  .proj-index { color: var(--faint); font-size: 0.85rem; }
+  .proj-title { font-weight: 600; color: var(--text); flex: 1 1 auto; min-width: 180px; }
+  .proj-tag {
+    font-size: 0.72rem;
+    text-transform: lowercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius);
+    padding: 0.1rem 0.45rem;
+  }
+  .proj-status { font-size: 0.78rem; color: var(--ok); }
+  .proj-status.ongoing { color: var(--muted); }
+
+  .proj-body { padding: 0 1.1rem 1.2rem; }
+  .proj-meta { color: var(--faint); font-size: 0.85rem; margin: 0 0 0.9rem; }
+  .proj-skills { font-size: 0.85rem; color: var(--muted); margin-top: 1rem; }
+  .proj-body ul { padding-left: 1.1rem; margin: 0 0 1rem; }
+  .proj-body li { margin-bottom: 0.4rem; }
+
+  .proj-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 0 0 1rem;
+  }
+  .proj-caption {
+    color: var(--faint);
+    font-size: 0.8rem;
+    margin: -0.7rem 0 1.1rem;
+  }
+
+  .proj-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin: 0 0 1rem;
+  }
+  .proj-gallery .proj-image { width: 100%; margin: 0; aspect-ratio: 1 / 1; object-fit: cover; }
+  @media (max-width: 480px) {
+    .proj-gallery { grid-template-columns: 1fr; }
+    .proj-gallery .proj-image { aspect-ratio: 4 / 3; }
+  }
+
+  .proj-gallery video.proj-image {
+    grid-column: 1 / -1;
+    width: 65%;
+    margin: 0.2rem auto 1rem;
+    aspect-ratio: auto;
+    background: #000;
+  }
+  .proj-body > video.proj-image {
+    width: 65%;
+    margin: 0 auto 1rem;
+    aspect-ratio: auto;
+    background: #000;
+  }
+  @media (max-width: 600px) {
+    .proj-gallery video.proj-image,
+    .proj-body > video.proj-image {
+      width: 100%;
+    }
+  }
+
+  .proj-note-center {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 1.65em;
+  }
+
+  .todo {
+    display: block;
+    background: var(--todo-bg);
+    border: 1px dashed var(--todo-border);
+    color: var(--todo-text);
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+    margin: 0.7rem 0;
+  }
+  .todo strong { color: var(--todo-text); }
+
+  /* ---------- contact ---------- */
+  .contact-grid { display: grid; gap: 0.5rem 1.2rem; grid-template-columns: max-content 1fr; font-size: 0.92rem; }
+  .contact-grid dt { color: var(--faint); }
+  .contact-grid dt::after { content: ":"; }
+  .contact-grid dd { margin: 0; }
+
+  /* ---------- credentials ---------- */
+  .cert-list { list-style: none; padding: 0; margin: 0; }
+  .cert-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .cert-list li:last-child { border-bottom: none; }
+  .cert-name { color: var(--text); }
+  .cert-issuer { color: var(--muted); font-size: 0.85rem; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.6rem 0 2.4rem;
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+
+  ::selection { background: var(--accent-dim); color: #10161a; }
+
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+    h1.name { font-size: 1.55rem; }
+    dl.spec, .contact-grid { grid-template-columns: 1fr; }
+    dl.spec dt, .contact-grid dt { margin-top: 0.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <span class="logo"><b>~/ricardo</b></span>
+    <nav class="nav-links">
+      <a href="#about">about</a>
+      <a href="#experience">experience</a>
+      <a href="#projects">projects</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <div class="prompt-line"><span class="sym">$</span> whoami</div>
+    <h1 class="name">Ricardo Hidalgo<span aria-hidden="true" class="cursor">&nbsp;</span></h1>
+    <p class="tagline">CPI, Mechanical Engineering graduate </p>
+
+    <dl class="spec">
+      <div><dt>location</dt><dd>Montreal, QC</dd></div>
+      <div><dt>current role</dt><dd> Senior Associate Mechanical Designer in MedTech</dd></div>
+      <div><dt>education</dt><dd>B.Eng. Mechanical Engineering, Concordia University </dd></div>
+      <div><dt>status</dt><dd> always open to a good conversation </dd></div>
+    </dl>
+
+
+    <div class="links">
+      <a href="mailto:rhidalgodr@gmail.com">email</a>
+      <a href="https://www.linkedin.com/in/ricardo-hidalgo-99a89223b/">linkedin</a>
+      <a href="https://github.com/Rickyy26">github</a>
+      <a href="resume.pdf">résumé (pdf)</a>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2><span class="hash">#</span>about</h2>
+    <div class="about-body">
+      <p class="bio">
+      Hi there, 
+      </p>
+      <p>
+        I'm Ricardo, a mechanical engineering graduate based in Montreal. By day I work on the design of medical devices at Jubilant DraxImage; outside of work I'm usually elbow-deep in something mechanical, 
+        whether that's building a bike from scratch, chasing down a weird noise in my car, or playing music with my brother. I like projects where I actually have to understand how something works, not just get it working.
+      </p>
+      
+      <div class="toolbox">
+        <span class="pill">CAD</span>
+        <span class="pill">Design for Manufacturing</span>
+        <span class="pill">test-bench design</span>
+        <span class="pill">fluid mechanics</span>
+        <span class="pill">CFD</span>
+        <span class="pill">FEA</span>
+        <span class="pill">Solidworks</span>
+        <span class="pill">root-cause analysis</span>
+        <span class="pill">cross-functional collaboration</span>
+        <span class="pill">technical communication</span>
+        <span class="pill">ownership</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <h2><span class="hash">#</span>experience</h2>
+
+    <details class="project" open>
+      <summary>
+        <span class="proj-index">01</span>
+        <span class="proj-title">Senior Associate Mechanical Designer</span>
+        <span class="proj-tag">current</span>
+        <span class="proj-status">May 2025 - present</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">Jubilant RadioPharma — R&amp;D, Medical Devices · Montreal, QC</p>
+        <p>
+          <span class="todo"><strong>Joined as a hardware intern and was promoted into this role. Project technical lead, supporting project leadership, conducted investigations, designing & executing testing protocols, and producing technical documentation.</strong></span>
+        </p>
+        <ul>
+          <li>Lead mechanical design of a test bench replicating a clinical-grade medical device, integrating mechanical, electrical, and software subsystems.</li>
+          <li>Designed and executed fluidics testing and characterization protocols; led root-cause investigations .</li>
+          <li>Work across software, hardware, electrical, and business teams; Applied ISO 13485, ISO 13849, ISO 14971, and ISO 527 among others in a regulated industry.</li>
+        </ul>
+        <p class="proj-skills">root-cause analysis · cross-functional collaboration · ISO 13485 / 13849 / 14971 / 527 · Solidworks · Fluid Mechanics · Research &amp; Development</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">02</span>
+        <span class="proj-title">Mechanical Designer</span>
+        <span class="proj-tag">current</span>
+        <span class="proj-status">September 2024 - present</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">CPG · Montreal, QC</p>
+        <p>
+          <span class="todo"><strong>Designed multiple custom automotive products with innovative solutions based on client's requests. Wide range of solutions designed for clients ranging from individuals to multinational corporations.</strong></span>
+        </p>
+        <ul>
+          <li>Conceived and designed a variety of mechanical assemblies and products for automotive clients. Products are mostly designed to be retrofit onto existing vehicles.</li>
+          <li>Heavily involved in the manufacturing, prototyping, CNC, and machining process of many of the designed parts.</li>
+          <li>Implementation of Project scheduling, Design for Manufacturing, stress analysis, fastener selection, and more.</li>
+        </ul>
+        <p class="proj-skills">Design for Manufacturing · Manufacturing · CNC · CAM · Project Management · Fusion 360</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">03</span>
+        <span class="proj-title">Production Engineering Intern</span>
+        <span class="proj-status ongoing">May 2024 - September 2024</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">ABB · Montreal, QC</p>
+        <p>
+          <span class="todo"><strong>Part of the mandate was assisting in continuous improvement; reduced man hours up to 422 h/year, increased savings up to 33,760.00$/year and increased production efficiency.</strong></span>
+        </p>
+        <ul>
+          <li>Supported production by preparing documentation, scheduling, labeling components, tackling production issues, and increasing worker efficiency.</li>
+          <li>Developed projects such as automated KPI tracker for projects & tasks, data parser for sensor readings in testing units, standardized procedures, automated & optimized storage for reduced wasted time and more.</li>
+        </ul>
+        <p class="proj-skills">Continuous Improvement · Lean Manufacturing · Cross-functional collaboration · presenting</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">04</span>
+        <span class="proj-title">Programming Consultant</span>
+        <span class="proj-status ongoing">June 2022 - January 2025</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">SBX Technologies · Brossard, QC</p>
+        <p>
+          <span class="todo"><strong>Collaborating with various teams on Salesforce development for integrations to client's systems and needs.</strong></span>
+        </p>
+        <ul>
+          <li>Object oriented programming, dynamic class injection, package integration, scripting/automating large data import processes, documentation, automated tasks and more.</li>
+          <li>Coding with Salesforce languages for managing and creating components, triggers, flows, object migrations, etc. (Java, Javascript, SQL, HTML/CSS,)</li>
+        </ul>
+        <p class="proj-skills">Salesforce · root-cause analysis · cross-functional collaboration · presenting</p>
+      </div>
+    </details>
+  </section>
+
+  <section id="projects">
+    <h2><span class="hash">#</span>projects</h2>
+
+    <details class="project" open>
+      <summary>
+        <span class="proj-index">01</span>
+        <span class="proj-title">Low-Speed Water Tunnel</span>
+        <span class="proj-tag">research</span>
+        <span class="proj-status">complete</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">Capstone project · Concordia Turbulence Research Lab (CTRL)</p>
+        <p>
+          <strong>Context.</strong> Dr. Ebenezer Ekow Essel's Turbulence Research Lab needed a research-grade
+          low-speed water tunnel to support ongoing experimental fluid dynamics work.
+        </p>
+        <p>
+          <strong>Approach.</strong> I led the Fluids design of the entire system.
+        </p>
+        <ul>
+          <li>Used CFD analysis to determine the optimal geometry for multiple components within the Flow Conditioner</li>
+          <li>Multiple geometries explored, including a 3D, 10 degree polynomial contraction</li>
+          <li>Both the CFD and FEA analysis were precise simulations with elements in the order of 10E7. The accuracy of the simulations had to be verified with Mesh independence studies.</li>
+          <li>Was heavily involved in the mechanical, material choice, fastener selection, and manufacturing of the water tunnel's components.</li>
+        </ul>
+        <p>
+          <strong>Outcome.</strong>
+          <span class="todo">Two water tunnels were engineered, one was fully research grade, and a smaller scale version was redesigned and manufactured. The small scale version included more cost-effective materials, but was still manufactured out of steel.</span>
+        </p>
+        <img class="proj-image" src="images/water-tunnel/poster_1.jpg" alt="Capstone poster 1">
+        <img class="proj-image" src="images/water-tunnel/poster_2.jpg" alt="Capstone poster 2">
+        <p class="proj-skills">CFD · FEA · Ansys · SolidWorks · DFM · technical drawing · Fluid Mechanics · Linux</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">02</span>
+        <span class="proj-title">Medical Device Test Bench</span>
+        <span class="proj-tag">industry</span>
+        <span class="proj-status ongoing">ongoing</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">Jubilant RadioPharma</p>
+        <p>
+          A project that started as a way to test a pump independently and evolved into a fully fledged test bench to test mechanical, fluidics, electrical and software features. 
+        </p>
+        <ul>
+          <li>Identified the key subsystems that would need to be implemented to replicate the original system.</li>
+          <li>Included a variety of sensors to capture relevant metrics required for engineering studies and testing.</li>
+          <li>Implemented innovative software features into the test bench, serving as a bridge to then push into production units.</li>
+        </ul>
+        <p class="todo">The result is the first version of the test bench being created and consistently used for engineering investigations to help on field issues, as well as upcoming features.</p>
+        <p class="proj-skills">Python · Electronics · Circuits · CAD · Fluid Mechanics · Data Processing · Sensors · Linux</p>
+
+        <p class="proj-note-center">can't really show pictures of this one :)</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">03</span>
+        <span class="proj-title">Autonomous Mobile Robot</span>
+        <span class="proj-tag">academic</span>
+        <span class="proj-status">complete</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">Computer Vision</p>
+        <p>
+          <strong>Context.</strong> An autonomous mobile robot that uses a custom computer vision library as well as an external camera source
+        </p>
+        <p>
+          <strong>Approach.</strong> I singlehandedly designed the hardware and most of the software of this Autonomous Mobile robot. This robot uses a custom computer vision library combined with a custom electrical circuit to control the movements of the robot. The visual input was provided by an overhead camera which detected and tracked objects, and allowed the robot to switch between a chase or flee mode.
+        </p>
+        <ul>
+          <li>A custom computer vision library was conceived to recognize borders and centroids of obstacles</li>
+          <li>Dijkstra's algorithm was implemented used to decide the pathing of the robot in function of its target and obstacles.</li>
+          <li>The hardware used was a simple webcam for visual input, a bluetooth module receiver for commands, a motor control module, servo motors, and more.</li>
+          <li>The robot was fully 3D printed based on a custom frame design, tailored to our components.</li>
+        </ul>
+        <p>
+          <strong>Outcome.</strong>
+          <span class="todo">The object recognition of the software worked as intended, alongside the hardware aspect. The software was tuned to recognize objects with various coloured circled labels, tackling every frame individually in a matrix pattern to compute objects. However, the pathing still requires a bit of tuning based on closeness to the objects.</span>
+        </p>
+        <div class="proj-gallery">
+          <img class="proj-image" src="images/robot/robot_CAD.jpg" alt="Robot CAD">
+          <img class="proj-image" src="images/robot/final_setup.jpg" alt="Robot final hardware setup">
+          <video class="proj-image" src="images/robot/robot_in_action.mp4" controls muted playsinline></video>
+        </div>
+        <p class="proj-skills">C++ · C · Computer Vision · Coding · electronics & circuitry · CAD · Serial communication · Pathing · Motor control · Image Processing</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">04</span>
+        <span class="proj-title">5-bit Analog Circuit</span>
+        <span class="proj-tag">academic</span>
+        <span class="proj-status">complete</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">academic</p>
+        <p>
+          <strong>Context.</strong>
+          <span class="todo">Our final project for an electronics class was designing and building a fully analog circuit. We chose the analog BPM sensor and display.</span>
+        </p>
+        <p>
+          <strong>Approach.</strong> The architecture chosen was a 5-bit system using asynchronous J-K Flip-Flops.
+        </p>
+        <ul>
+          <li>5 J-K Flip-Flops were used in an asynchronous layout paired with a clock</li>
+          <li>Logic gates were implemented between Flip-Flops, as well as throughout the circuit.</li>
+          <li>A button was used as the input, pressed at the desired rhythm.</li>
+        </ul>
+        <p>
+          <strong>Outcome.</strong>
+          <span class="todo">The output was a fully analog circuit that works like a charm. The architecture relies heavily on Op Amps, Logic Gates, Integrated circuits and many more components to execute the logic functionality of the circuit without using a single line of code. The circuit uses LED's to display the range of BPM's detected, resetting at a chosen interval.</span>
+        </p>
+        <div class="proj-gallery">
+          <img class="proj-image" src="images/circuit/initial_circuit.jpg" alt="Initial diagram">
+          <img class="proj-image" src="images/circuit/progress.jpg" alt="Progress">
+          <img class="proj-image" src="images/circuit/final_diagram_circuit.jpg" alt="Final circuit diagram">
+          <img class="proj-image" src="images/circuit/final_circuit.jpg" alt="Final circuit, working">
+        </div>
+        <p class="proj-skills">Electronics · Circuits · Integrated circuits · Logic gates · Operating amps</p>
+      </div>
+    </details>
+
+    <details class="project">
+      <summary>
+        <span class="proj-index">05</span>
+        <span class="proj-title">Thermoelectric Car</span>
+        <span class="proj-tag">academic</span>
+        <span class="proj-status">complete</span>
+      </summary>
+      <div class="proj-body">
+        <p class="proj-meta">academic</p>
+        <p>
+          Our final project for a thermodynamics class was to design and manufacture a thermoelectric car, using a Peltier device to climb a 15 degree slope.
+        </p>
+        <ul>
+          <li>Performed calculations to establish the maximum electric output of a Peltier device to establish what the heat source and cold source should be</li>
+          <li>Used mostly recycled components throughout the build, as this was a constraint imposed on us; with only the base and axle being 3D printed.</li>
+          <li>Implemented lego gears to establish a powerflow to the wheels while increasing torque.</li>
+          <li>Friction had to be increased at the wheels, which were CD's as there was some slipping.</li>
+        </ul>
+        <p class="todo"> Slowly but surely, the thermoelectric car was able to move. The car was able to go 1m on flat ground, and about 0.75m at a 15 degree angle due to the car losing too much inertia and the wheels would start to slip.</p>
+        <video class="proj-image" src="images/thermo-car/moving-thermocar.mp4" controls muted playsinline></video>
+      </div>
+    </details>
+    
+  </section>
+
+  <section id="contact">
+    <h2><span class="hash">#</span>contact</h2>
+    <dl class="contact-grid">
+      <div><dt>email</dt><dd><a href="mailto:rhidalgodr@gmail.com">rhidalgodr@gmail.com</a></dd></div>
+      <div><dt>linkedin</dt><dd><a href="https://www.linkedin.com/in/ricardo-hidalgo-99a89223b/">https://www.linkedin.com/in/ricardo-hidalgo-99a89223b/</a></dd></div>
+      <div><dt>github</dt><dd><a href="https://github.com/Rickyy26">https://github.com/Rickyy26</a></dd></div>
+      <div><dt>location</dt><dd>Montreal, QC</dd></div>
+      <div><dt>résumé</dt><dd><a href="resume.pdf">download PDF</a></dd></div>
+    </dl>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div>built by hand, no framework — last updated <span id="updated">2026</span></div>
+</footer>
+
+</body>
+</html>
